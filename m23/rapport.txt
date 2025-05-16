@@ -1,0 +1,66 @@
+------------------------------------------------------- 
+ Date et heure de création : 2025-05-15T13:49:48 
+------------------------------------------------------- 
+Running tests...
+Test project /adhome/w/we/wemmert/moulinette4.0/tmp/tmpdir.XdPdYf
+      Start  1: init_graphe
+ 1/20 Test  #1: init_graphe ......................   Passed    0.01 sec
+      Start  2: deinit_graphe
+ 2/20 Test  #2: deinit_graphe ....................***Failed    0.01 sec
+      Start  3: ordre
+ 3/20 Test  #3: ordre ............................   Passed    0.01 sec
+      Start  4: nb_aretes
+ 4/20 Test  #4: nb_aretes ........................   Passed    0.01 sec
+      Start  5: ajouter_sommet
+ 5/20 Test  #5: ajouter_sommet ...................   Passed    0.01 sec
+      Start  6: existe_arete
+ 6/20 Test  #6: existe_arete .....................   Passed    0.01 sec
+      Start  7: ajouter_arete
+ 7/20 Test  #7: ajouter_arete ....................***Failed    0.01 sec
+      Start  8: index_arete
+ 8/20 Test  #8: index_arete ......................***Failed    0.01 sec
+      Start  9: sommets_adjacents
+ 9/20 Test  #9: sommets_adjacents ................***Failed    0.01 sec
+      Start 10: degre
+10/20 Test #10: degre ............................***Failed    0.01 sec
+      Start 11: est_regulier
+11/20 Test #11: est_regulier .....................***Failed    0.01 sec
+      Start 12: generer_complet
+12/20 Test #12: generer_complet ..................***Failed    0.01 sec
+      Start 13: nb_composantes_connexes
+13/20 Test #13: nb_composantes_connexes ..........***Failed    0.01 sec
+      Start 14: sont_connectes
+14/20 Test #14: sont_connectes ...................***Failed    0.01 sec
+      Start 15: coloriage_glouton
+15/20 Test #15: coloriage_glouton ................***Failed    0.01 sec
+      Start 16: generer_permutation
+16/20 Test #16: generer_permutation ..............***Failed    0.01 sec
+      Start 17: appliquer_permutation
+17/20 Test #17: appliquer_permutation ............***Failed    0.01 sec
+      Start 18: dijkstra
+18/20 Test #18: dijkstra .........................***Failed    0.01 sec
+      Start 19: trier_aretes
+19/20 Test #19: trier_aretes .....................***Failed    0.01 sec
+      Start 20: kruskal
+20/20 Test #20: kruskal ..........................***Failed    0.01 sec
+
+25% tests passed, 15 tests failed out of 20
+
+Total Test time (real) =   0.14 sec
+
+The following tests FAILED:
+	  2 - deinit_graphe (Failed)
+	  7 - ajouter_arete (Failed)
+	  8 - index_arete (Failed)
+	  9 - sommets_adjacents (Failed)
+	 10 - degre (Failed)
+	 11 - est_regulier (Failed)
+	 12 - generer_complet (Failed)
+	 13 - nb_composantes_connexes (Failed)
+	 14 - sont_connectes (Failed)
+	 15 - coloriage_glouton (Failed)
+	 16 - generer_permutation (Failed)
+	 17 - appliquer_permutation (Failed)
+	 18 - dijkstra (Failed)
+	 19 - trier_aretes (Failed)
+	 20 - kruskal (Failed)
