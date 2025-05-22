@@ -11,3 +11,10 @@ typedef struct station
 	Mac mac;
 	Ip ip;
 }
+typedef struct switch
+{
+	Mac mac;
+	size_t nbPorts;
+	size_t Priorite;
+	Ip* commutTab;
+}
