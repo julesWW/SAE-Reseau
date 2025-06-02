@@ -47,4 +47,4 @@ typedef struct Reseau_Local{
 typedef struct TrameEthernet
 {
 
-}TrameEthernet;
+} TrameEthernet;
