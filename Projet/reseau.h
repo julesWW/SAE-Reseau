@@ -1,3 +1,7 @@
+#pragma once
+
+#include <stdlib.h>
+#include <stdbool.h>
 
 
 //Adresse MAC
