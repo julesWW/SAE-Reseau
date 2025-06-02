@@ -1,7 +1,7 @@
 
 
 //Adresse MAC
-typedef struct {
+typedef struct MACAddress{
     unsigned char octets[6];
 } MACAddress;
 
@@ -42,5 +42,5 @@ typedef struct Reseau_Local{
 
 typedef struct TrameEthernet
 {
-    
+
 }TrameEthernet;
