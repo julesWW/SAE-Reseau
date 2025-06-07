@@ -6,7 +6,6 @@
 #include "m23/graphe.h"
 
 
-
 //Adresse MAC
 typedef struct MACAddress{
     unsigned char octets[6];
@@ -23,12 +22,12 @@ typedef struct IPAddrV4{
     */
     unsigned char octets[4];
 
-} IPAddressV4;
+} IPAddrV4;
 
 //Station : adresse MAC + adresse IP
 typedef struct Station{
     MACAddress mac;
-    IPAddressV4 ip;
+    IPAddrV4 ip;
 } Station;
 
 //Entrée dans une table de commutation
@@ -40,18 +39,18 @@ typedef struct TableComm{
 //Switch : adresse MAC + nombre de ports + priorité + table de commutation
 typedef struct Switch{
     MACAddress mac;
-    int nb_ports;
-    int priorite;
-    int nb_entrees;
+    size_t nb_ports;
+    size_t priorite;
+    size_t nb_entrees;
     TableComm* table_commutation;
 } Switch;
 
 //Réseau local : contient un ensemble de stations et de switches
 typedef struct Reseau_Local{
-    int nb_stations;
+    size_t nb_stations;
     Station* station;
-    int nb_switches;
-    Switch* switches;
+    size_t nb_switchs;
+    Switch* switchs;
 } Reseau_Local;
 
 typedef struct TrameEthernet
@@ -61,13 +60,23 @@ typedef struct TrameEthernet
     MACAddress dest[6];
     MACAddress src[6];
     char type[7];
-    char data[1500];
+    char donnees[1500];
+    uint8_t bourrage[46];
     char fcs[4];
 } TrameEthernet;
 
-//fonction d'affichage
+//Fonctions d'initialisation
+void init_IPAddrV4(IPAddrV4 *ip, unsigned char octets[4]);
+void init_MACAddress(MACAddress *mac, unsigned char octets[6]);
+void init_station(Station *station, MACAddress *mac, IPAddrV4 *ip);
+void init_table_comm(TableComm *table, MACAddress *mac, unsigned int port);
+void init_switch(Switch *sw, MACAddress *mac, size_t nb_ports, size_t priorite, size_t nb_entrees);
+void init_TrameEthernet(TrameEthernet *trame, char preambule[7], char sfd, MACAddress *dest, MACAddress *src, size_t type, char *donnees);
+void init_reseau_local(Reseau_Local *reseau, size_t nb_stations, Station *stations, size_t nb_switches, Switch *switches);
+
+//Fonctions d'affichage
 void afficher_mac(MACAddress *mac);
-void afficher_ip(IPAddressV4 *ip);
+void afficher_ip(IPAddrV4 *ip);
 void afficher_station(Station *station);
 void afficher_switch(Switch *sw);
 void afficher_reseau(Reseau_Local *reseau);
