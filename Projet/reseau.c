@@ -1,7 +1,4 @@
-#pragma once
-
 #include "reseau.h"
-#include "m23/algos.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -48,13 +45,13 @@ void init_TrameEthernet(TrameEthernet *trame, char preambule[7], char sfd, MACAd
     memcpy(trame->preambule, preambule, 7); //memcpy pour assurer la bonne copie et le \0 à la fin (je crois)
     trame->sfd = sfd;
     //trame->dest = *dest; (marche pas car c'est un tableau)
-    memcpy(trame->dest, dest, sizeof(MACAddress)); 
+    memcpy(trame->dest, dest, sizeof(MACAddress));
     //trame->src = *src;
-    memcpy(trame->src, src, sizeof(MACAddress)); 
+    memcpy(trame->src, src, sizeof(MACAddress));
     //trame->type = type;
-    memcpy(trame->type, &type, sizeof(size_t)); 
-    strcpy(trame->donnees, donnees); 
-    //Pour le bourrage jsp comment calculer la taille 
+    memcpy(trame->type, &type, sizeof(size_t));
+    strcpy(trame->donnees, donnees);
+    //Pour le bourrage jsp comment calculer la taille
     //Pour le fcs non plus -_-
 }
 
@@ -78,23 +75,23 @@ void afficher_station(Station *station){
 void afficher_switch(Switch *sw) {
     printf("Switch - ");
     afficher_mac(&sw->mac);
-    printf("Ports : %d | Priorité : %d\n", sw->nb_ports, sw->priorite);
-    printf("Table de commutation (%d entrées) :\n", sw->nb_entrees);
-    for (int i = 0; i < sw->nb_entrees; i++) {
+    printf("Ports : %ld | Priorité : %ld\n", sw->nb_ports, sw->priorite);
+    printf("Table de commutation (%ld entrées) :\n", sw->nb_entrees);
+    for (size_t i = 0; i < sw->nb_entrees; i++) {
         afficher_mac(&sw->table_commutation[i].mac);
         printf(" -> Port %u\n", sw->table_commutation[i].port);
     }
 }
 
-//Début du main
-int main() {
-    
+
+int initReseau() {
+
     Reseau_Local reseau;
     size_t nb_equipements;
     size_t nb_liaisons;
     size_t nb_stations = 0;
     size_t nb_switchs = 0;
-    
+
     //Lecture du fichier de configuration
     FILE *fconfig = fopen("config.txt", "r");
     if (fconfig == NULL) {
@@ -106,7 +103,7 @@ int main() {
     size_t nligne = 0;
     while(fgets(ligne, sizeof(ligne), fconfig)) {
         nligne++;
-        if(nligne == 1){
+        if(nligne == 0){
             //Je pars du principe que le fichier de configuration est au bon format mais on pourra mettre une vérification au cas où
             sscanf(ligne, "%zu %zu", &nb_equipements, &nb_liaisons);
             printf("Nombre d'équipements : %zu, Nombre de liaisons : %zu\n", nb_equipements, nb_liaisons);
@@ -120,15 +117,15 @@ int main() {
                 Station nom_station;
                 //Récupération de l'adresse MAC
                 unsigned char mac_octets[6];
-                sscanf(ligne + 2, "%u:%u:%u:%u:%u:%u", &mac_octets[0], &mac_octets[1], &mac_octets[2], &mac_octets[3], &mac_octets[4], &mac_octets[5]);
+                sscanf(ligne + 2, "%hhu:%hhu:%hhu:%hhu:%hhu:%hhu", &mac_octets[0], &mac_octets[1], &mac_octets[2], &mac_octets[3], &mac_octets[4], &mac_octets[5]);
                 MACAddress mac_station;
                 init_MacAddress(&mac_station, mac_octets);
                 //Récupération de l'adresse IP
                 unsigned char ip_octets[4];
-                sscanf(ligne + 20, "%u.%u.%u.%u", &ip_octets[0], &ip_octets[1], &ip_octets[2], &ip_octets[3]);
+                sscanf(ligne + 20, "%hhu.%hhu.%hhu.%hhu", &ip_octets[0], &ip_octets[1], &ip_octets[2], &ip_octets[3]);
                 IPAddrV4 ip_station;
                 init_IPAddrV4(&ip_station, ip_octets);
-                init_station(&nom_station, &mac_station, &ip_station); 
+                init_station(&nom_station, &mac_station, &ip_station);
             }
             if(ligne[0] == '2'){
                 //C'est un switch
@@ -138,7 +135,7 @@ int main() {
                 Switch nom_switch;
                 //Récupération de l'adresse MAC
                 unsigned char mac_octets[6];
-                sscanf(ligne + 2, "%u:%u:%u:%u:%u:%u", &mac_octets[0], &mac_octets[1], &mac_octets[2], &mac_octets[3], &mac_octets[4], &mac_octets[5]);
+                sscanf(ligne + 2, "%hhu:%hhu:%hhu:%hhu:%hhu:%hhu", &mac_octets[0], &mac_octets[1], &mac_octets[2], &mac_octets[3], &mac_octets[4], &mac_octets[5]);
                 MACAddress mac_switch;
                 init_MacAddress(&mac_switch, mac_octets);
                 //Récupération du nombre de ports
