@@ -1,9 +1,9 @@
 #pragma once
 
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include "m23/graphe.h"
 
 
 //Adresse MAC
@@ -23,6 +23,7 @@ typedef struct IPAddrV4{
     unsigned char octets[4];
 
 } IPAddrV4;
+
 
 //Station : adresse MAC + adresse IP
 typedef struct Station{
@@ -44,6 +45,24 @@ typedef struct Switch{
     size_t nb_entrees;
     TableComm* table_commutation;
 } Switch;
+
+//Valeurs pour différencier station et switch
+typedef enum {
+    STATION,
+    SWITCH
+} Type_equipement;
+
+//union pouvant contenir un switch ou une station
+typedef union {
+    Station st;
+    Switch sw;
+} Appareil;
+
+//structure contenant l'union Equipement et l'enum Type_equipement pour reconnaitre ce dernier
+typedef struct{
+	Type_equipement type;
+	Appareil valeur;
+}Equipement
 
 //Réseau local : contient un ensemble de stations et de switches
 typedef struct Reseau_Local{
