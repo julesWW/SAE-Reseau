@@ -7,31 +7,31 @@
 
 //Fonctions d'initialisation et de deinitialisation
 void init_MacAddress(MACAddress *mac) {
-    mac->octets=malloc(sizeof(unsigned char)*6);
+    *mac->octets=malloc(sizeof(unsigned char)*6);
 }
 
 void deinit_MacAddress(MACAddress *mac){
 	free(mac->octets);
-	mac->octets=NULL;
+	*mac->octets=NULL;
 }
 
 void init_IPAddrV4(IPAddrV4 *ip) {
-    ip->octets=malloc(sizeof(unsigned char)*4);
+    *ip->octets=malloc(sizeof(unsigned char)*4);
 }
 
 void deinit_IPAddrV4(IPAddrV4 *ip){
 	free(ip->octets);
-	ip->octets=NULL;
+	*ip->octets=NULL;
 }
 
 void init_station(Station *station) {
-    init_MACAddress(station->mac) ;
-    init_IPAddrV4(station->ip) ;
+    init_MACAddress(&station->mac);
+    init_IPAddrV4(&station->ip) ;
 }
 
 void deinit_station(Station *station) {
-	deinit_MacAddress(station->mac);
-	deinit_IPAddrV4(station->ip);
+	deinit_MacAddress(&station->mac);
+	deinit_IPAddrV4(&station->ip);
 }
 
 void init_table_comm(TableComm *table) {
@@ -66,7 +66,7 @@ void deinit_switch(Switch *sw) {
 void init_reseau_local(Reseau_Local *reseau) {
     reseau->nb_equipements = 0;
     reseau->equipement_capacite=8;
-    reseau->equipement = malloc(INITIAL_CAPACITY * sizeof(equipement));// allocation d'un tableau d'equipement de capacité initiale de 8
+    reseau->equipement = malloc(INITIAL_CAPACITY * sizeof(Equipement));// allocation d'un tableau d'equipement de capacité initiale de 8
     reseau->nb_liaisons = 0;
     reseau->liaison_capacite=8;
     reseau->liaisons = malloc(INITIAL_CAPACITY * sizeof(Liaison));// allocation d'un tableau de liaisons de capacité initiale de 8
@@ -85,33 +85,39 @@ void deinit_reseau_local(Reseau_Local *reseau) {
 }
 
 void init_TrameEthernet(TrameEthernet *trame) {
-	trame->preambule=malloc(7*sizeof(char));
+	*trame->preambule=malloc(7*sizeof(char));
     trame->sfd = 0; //pas sur du 0
-    trame->dest = malloc( 6 * sizeof(MACAddress));
-    trame->src = malloc( 6 * sizeof(MACAddress));
-	trame->type=malloc(7*sizeof(char));
-	trame->donnees=malloc(1500*sizeof(char));
-	trame->bourrage=malloc(46*sizeof(char));
-	trame->fcs=malloc(4*sizeof(char));
+    trame->dest = malloc(sizeof(MACAddress));
+    trame->src = malloc(sizeof(MACAddress));
+	*trame->type=malloc(7*sizeof(char));
+	*trame->donnees=malloc(1500*sizeof(char));
+	*trame->bourrage=malloc(46*sizeof(char));
+	*trame->fcs=malloc(4*sizeof(char));
 	//pas sur des valeurs
 }
 
 void deinit_TrameEthernet(TrameEthernet *trame) {
 	free(trame->preambule);
-	trame->preambule=NULL;
+	*trame->preambule=NULL;
     trame->sfd = 0; //pas sur du 0
+    /*
 	free(trame->dest);
-	trame->dest=NULL;
+	*trame->dest=NULL;
+    */
+    deinit_MacAddress(&trame->dest);
+    /*
 	free(trame->src);
-	trame->src=NULL;
+	*trame->src=NULL;
+    */
+    deinit_MacAddress(&trame->src);
 	free(trame->type);
-	trame->type=NULL;
+	*trame->type=NULL;
 	free(trame->donnees);
-	trame->donnees=NULL;
+	*trame->donnees=NULL;
 	free(trame->bourrage);
-	trame->bourrage=NULL;
+	*trame->bourrage=NULL;
 	free(trame->fcs);
-	trame->fcs=NULL;
+	*trame->fcs=NULL;
 }
 
 
