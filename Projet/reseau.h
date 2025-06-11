@@ -42,7 +42,6 @@ typedef struct Switch{
     MACAddress mac;
     size_t nb_ports;
     size_t priorite;
-    size_t nb_entrees;
     TableComm* table_commutation;
 } Switch;
 
@@ -62,14 +61,23 @@ typedef union {
 typedef struct{
 	Type_equipement type;
 	Appareil valeur;
-}Equipement
+}Equipement;
+
+//liaison : contient 2 equipement et représente qu'ils sont liés
+typedef struct Liaison{
+	Equipement e1;
+	Equipement e2;
+	size_t poids;
+}Liaison;
 
 //Réseau local : contient un ensemble de stations et de switches
 typedef struct Reseau_Local{
-    size_t nb_stations;
-    Station* station;
-    size_t nb_switchs;
-    Switch* switchs;
+	size_t equipement_capacite;
+    size_t nb_equipements;
+    Equipement* equipement;
+    size_t liaison_capacite;
+    size_t nb_liaisons;
+    Liaison* liaisons;
 } Reseau_Local;
 
 typedef struct TrameEthernet
