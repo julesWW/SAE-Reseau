@@ -9,8 +9,8 @@
 
 
 void init_station(Station *station) {
-    init_MACAddress(&station->mac); //A Remplicer par juste les valeur dans le fichier config
-    init_IPAddrV4(&station->ip) ; //A Remplicer par juste les valeur dans le fichier config
+    init_MACAddress(&station->mac); //A Remplacer par juste les valeur dans le fichier config
+    init_IPAddrV4(&station->ip) ; //A Remplacer par juste les valeur dans le fichier config
 }
 
 //A Remplicer par juste les valeur dans le fichier config
