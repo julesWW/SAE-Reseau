@@ -6,29 +6,14 @@
 #define INITIAL_CAPACITY 8
 
 //Fonctions d'initialisation et de deinitialisation
-void init_MacAddress(MACAddress *mac) {
-    *mac->octets=malloc(sizeof(unsigned char)*6);
-}
 
-void deinit_MacAddress(MACAddress *mac){
-	free(mac->octets);
-	*mac->octets=NULL;
-}
-
-void init_IPAddrV4(IPAddrV4 *ip) {
-    *ip->octets=malloc(sizeof(unsigned char)*4);
-}
-
-void deinit_IPAddrV4(IPAddrV4 *ip){
-	free(ip->octets);
-	*ip->octets=NULL;
-}
 
 void init_station(Station *station) {
-    init_MACAddress(&station->mac);
-    init_IPAddrV4(&station->ip) ;
+    init_MACAddress(&station->mac); //A Remplicer par juste les valeur dans le fichier config
+    init_IPAddrV4(&station->ip) ; //A Remplicer par juste les valeur dans le fichier config
 }
 
+//A Remplicer par juste les valeur dans le fichier config
 void deinit_station(Station *station) {
 	deinit_MacAddress(&station->mac);
 	deinit_IPAddrV4(&station->ip);
@@ -82,42 +67,6 @@ void deinit_reseau_local(Reseau_Local *reseau) {
     reseau->liaisons = NULL;
     reseau->liaison_capacite=0;
     reseau->equipement_capacite=0;
-}
-
-void init_TrameEthernet(TrameEthernet *trame) {
-	*trame->preambule=malloc(7*sizeof(char));
-    trame->sfd = 0; //pas sur du 0
-    trame->dest = malloc(sizeof(MACAddress));
-    trame->src = malloc(sizeof(MACAddress));
-	*trame->type=malloc(7*sizeof(char));
-	*trame->donnees=malloc(1500*sizeof(char));
-	*trame->bourrage=malloc(46*sizeof(char));
-	*trame->fcs=malloc(4*sizeof(char));
-	//pas sur des valeurs
-}
-
-void deinit_TrameEthernet(TrameEthernet *trame) {
-	free(trame->preambule);
-	*trame->preambule=NULL;
-    trame->sfd = 0; //pas sur du 0
-    /*
-	free(trame->dest);
-	*trame->dest=NULL;
-    */
-    deinit_MacAddress(&trame->dest);
-    /*
-	free(trame->src);
-	*trame->src=NULL;
-    */
-    deinit_MacAddress(&trame->src);
-	free(trame->type);
-	*trame->type=NULL;
-	free(trame->donnees);
-	*trame->donnees=NULL;
-	free(trame->bourrage);
-	*trame->bourrage=NULL;
-	free(trame->fcs);
-	*trame->fcs=NULL;
 }
 
 
