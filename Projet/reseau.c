@@ -4,7 +4,7 @@
 #include <string.h>
 
 //Fonctions d'initialisation
-void init_MacAddress(MACAddress *mac, unsigned char octets[6]) {
+void init_MACAddress(MACAddress *mac, unsigned char octets[6]) {
     memcpy(mac->octets, octets, 6);
 }
 
@@ -26,7 +26,7 @@ void init_switch(Switch *sw, MACAddress *mac, size_t nb_ports, size_t priorite, 
     sw->mac = *mac;
     sw->nb_ports = nb_ports;
     sw->priorite = priorite;
-    sw->nb_entrees = nb_entrees;
+    //sw->nb_entrees = nb_entrees;
     sw->table_commutation = malloc(nb_entrees * sizeof(TableComm));
     if (sw->table_commutation == NULL) {
         fprintf(stderr, "Erreur malloc pour table de commutation.\n");
@@ -76,11 +76,14 @@ void afficher_switch(Switch *sw) {
     printf("Switch - ");
     afficher_mac(&sw->mac);
     printf("Ports : %ld | Priorité : %ld\n", sw->nb_ports, sw->priorite);
+
+    /*
     printf("Table de commutation (%ld entrées) :\n", sw->nb_entrees);
     for (size_t i = 0; i < sw->nb_entrees; i++) {
         afficher_mac(&sw->table_commutation[i].mac);
         printf(" -> Port %u\n", sw->table_commutation[i].port);
     }
+    */
 }
 
 
@@ -132,7 +135,7 @@ int initReseau() {
                 nb_switchs++;
                 char nom_switch[50];
                 sprintf(nom_switch, "switch%zu", nb_switchs);
-                Switch nom_switch;
+                Switch nomSwitch;
                 //Récupération de l'adresse MAC
                 unsigned char mac_octets[6];
                 sscanf(ligne + 2, "%hhu:%hhu:%hhu:%hhu:%hhu:%hhu", &mac_octets[0], &mac_octets[1], &mac_octets[2], &mac_octets[3], &mac_octets[4], &mac_octets[5]);
@@ -146,15 +149,14 @@ int initReseau() {
                 sscanf(ligne + 22, "%zu", &priorite);
                 //Initialisation du switch
                 init_switch(&nom_switch, &mac_switch, nb_ports, priorite, nb_ports);
+
                 //Initialisation de la table de commutation
-                /*nom_switch.table_commutation = malloc(nb_ports * sizeof(TableComm));
-                if (nom_switch.table_commutation == NULL) {
+                nomSwitch.table_commutation = malloc(nb_ports * sizeof(TableComm));
+                if (nomSwitch.table_commutation == NULL) {
                     fprintf(stderr, "Erreur malloc pour table de commutation.\n");
                     fclose(fconfig);
                     return EXIT_FAILURE;
-                }*/
-                ///!\jsp comment faire pour ça car il prend nom_switch comme char et non comme switch/!\
-
+                }
             }
 
         }
