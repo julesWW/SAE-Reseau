@@ -48,7 +48,6 @@ void init_switch(Switch *sw) {
     init_MACAddress(sw->mac);
     sw->nb_ports = 0;
     sw->priorite = 0;
-    sw->nb_entrees = 0;
     sw->table_commutation = malloc(INITIAL_CAPACITY * sizeof(TableComm)); // allocation d'un tableau de TableComm de capacité initiale de 8
     if (sw->table_commutation == NULL) {
         fprintf(stderr, "Erreur malloc pour table de commutation.\n");
@@ -60,26 +59,29 @@ void deinit_switch(Switch *sw) {
 	deinit_MACAddress(sw->mac);
 	sw->nb_ports = 0;
     sw->priorite = 0;
-    sw->nb_entrees = 0;
     free(sw->table_commutation);
     sw->table_commutation=NULL;
 }
 
 void init_reseau_local(Reseau_Local *reseau) {
-    reseau->nb_stations = 0;
-    reseau->station = malloc(INITIAL_CAPACITY * sizeof(Station));// allocation d'un tableau de Station de capacité initiale de 8
-    reseau->nb_switchs = 0;
-    reseau->switchs = malloc(INITIAL_CAPACITY * sizeof(Switch));// allocation d'un tableau de Switch de capacité initiale de 8
+    reseau->nb_equipements = 0;
+    reseau->equipement_capacite=8;
+    reseau->equipement = malloc(INITIAL_CAPACITY * sizeof(equipement));// allocation d'un tableau d'equipement de capacité initiale de 8
+    reseau->nb_liaisons = 0;
+    reseau->liaison_capacite=8;
+    reseau->liaisons = malloc(INITIAL_CAPACITY * sizeof(Liaison));// allocation d'un tableau de liaisons de capacité initiale de 8
 }
 
 void deinit_reseau_local(Reseau_Local *reseau) {
-    reseau->nb_stations = 0;
-    // Il faut probablement ajouter une boucle qui deinit chaque stations ,pareil pour les switchs ci-dessous et les TableComm dans les switchs
-    free(reseau->station);
-    reseau->station=NULL;
-    reseau->nb_switchs = 0;
-    free(reseau->switchs);
-    reseau->switchs = NULL;
+    reseau->nb_equipements = 0;
+    // Il faut probablement ajouter une boucle qui deinit chaque equipement ci-dessous et les TableComm dans les switchs
+    free(reseau->equipement);
+    reseau->equipement=NULL;
+    reseau->nb_liaisons = 0;
+    free(reseau->liaisons);
+    reseau->liaisons = NULL;
+    reseau->liaison_capacite=0;
+    reseau->equipement_capacite=0;
 }
 
 void init_TrameEthernet(TrameEthernet *trame) {
@@ -141,13 +143,33 @@ void afficher_switch(Switch *sw) {
     }
 }
 
+//Ajout de station / switch
+void ajouter_Station(Reseau_Local *reseau,MACAddress *mac,IPAddrV4 *ip){
+	Station st;
+	init_station(st);
+	st->mac=mac;
+	st->ip=ip;
+	reseau->equipement[reseau->nb_equipements]->valeur->st=st;
+	reseau->equipement[reseau->nb_equipements]->type=STATION;
+	reseau->nb_equipements++;
+}
+
+void ajouter_Switch(Reseau_Local *reseau,MACAddress *mac,size_t nb_ports,size_t priorite){
+	Switch sw;
+	init_switch(sw);
+	sw->mac=mac;
+	sw->nb_ports=nb_ports;
+	sw->priorite=priorite;
+	reseau->equipement[reseau->nb_equipements]->valeur->sw=sw;
+	reseau->equipement[reseau->nb_equipements]->type=SWITCH;
+	reseau->nb_equipements++;
+}
+
 //Chargement du réseau à partir du fichier de configuration
 int charger_Reseau(Reseau_Local *reseau) {
 	//on suppose que  le reseau est déjà initialisé
     size_t nb_equipements;
     size_t nb_liaisons;
-    size_t nb_stations = 0;
-    size_t nb_switchs = 0;
 
     //Lecture du fichier de configuration
     FILE *fconfig = fopen("config.txt", "r");
@@ -160,41 +182,47 @@ int charger_Reseau(Reseau_Local *reseau) {
     size_t nligne = 0;
     while(fgets(ligne, sizeof(ligne), fconfig)) {
         nligne++;
+        //Je pars du principe que le fichier de configuration est au bon format mais on pourra mettre une vérification au cas où
         if(nligne == 0){
-            //Je pars du principe que le fichier de configuration est au bon format mais on pourra mettre une vérification au cas où
             sscanf(ligne, "%zu %zu", &nb_equipements, &nb_liaisons);
             printf("Nombre d'équipements : %zu, Nombre de liaisons : %zu\n", nb_equipements, nb_liaisons);
         }
         else if(nligne <= nb_equipements){
+
+			//vérif place dans le tableau d'equipement
+			if(reseau->nb_equipements==reseau->equipement_capacite){
+				reseau->equipement_capacite*=2;
+				Equipement* Tab_Temp = malloc(sizeof(Equipement)*reseau->equipement_capacite);
+				for(size_t i=0;i<reseau->nb_equipements;i++){
+					Tab_Temp[i]=reseau->equipement[i];
+				}
+				free(reseau->equipement);
+				reseau->equipement=Tab_Temp;
+			}
             if(ligne[0] == '1'){
                 //C'est une station
-                nb_stations++;
-                char nom_station[50];
-                sprintf(nom_station, "station%zu", nb_stations);
-                Station nom_station;
                 //Récupération de l'adresse MAC
                 unsigned char mac_octets[6];
                 sscanf(ligne + 2, "%hhu:%hhu:%hhu:%hhu:%hhu:%hhu", &mac_octets[0], &mac_octets[1], &mac_octets[2], &mac_octets[3], &mac_octets[4], &mac_octets[5]);
                 MACAddress mac_station;
-                init_MacAddress(&mac_station, mac_octets);
+                init_MacAddress(&mac_station);
+                mac_station->octets=mac_octets;
                 //Récupération de l'adresse IP
                 unsigned char ip_octets[4];
                 sscanf(ligne + 20, "%hhu.%hhu.%hhu.%hhu", &ip_octets[0], &ip_octets[1], &ip_octets[2], &ip_octets[3]);
                 IPAddrV4 ip_station;
-                init_IPAddrV4(&ip_station, ip_octets);
-                init_station(&nom_station, &mac_station, &ip_station);
+                init_IPAddrV4(&ip_station);
+                ip_station->octets=ip_octets;
+                ajouter_Station(&reseau, &mac_station, &ip_station)
             }
             if(ligne[0] == '2'){
                 //C'est un switch
-                nb_switchs++;
-                char nom_switch[50];
-                sprintf(nom_switch, "switch%zu", nb_switchs);
-                Switch nom_switch;
                 //Récupération de l'adresse MAC
                 unsigned char mac_octets[6];
                 sscanf(ligne + 2, "%hhu:%hhu:%hhu:%hhu:%hhu:%hhu", &mac_octets[0], &mac_octets[1], &mac_octets[2], &mac_octets[3], &mac_octets[4], &mac_octets[5]);
                 MACAddress mac_switch;
-                init_MacAddress(&mac_switch, mac_octets);
+                init_MacAddress(&mac_switch);
+                mac_switch->octets=mac_octets;
                 //Récupération du nombre de ports
                 size_t nb_ports;
                 sscanf(ligne + 20, "%zu", &nb_ports);
@@ -202,18 +230,8 @@ int charger_Reseau(Reseau_Local *reseau) {
                 size_t priorite;
                 sscanf(ligne + 22, "%zu", &priorite);
                 //Initialisation du switch
-                init_switch(&nom_switch, &mac_switch, nb_ports, priorite, nb_ports);
-                //Initialisation de la table de commutation
-                /*nom_switch.table_commutation = malloc(nb_ports * sizeof(TableComm));
-                if (nom_switch.table_commutation == NULL) {
-                    fprintf(stderr, "Erreur malloc pour table de commutation.\n");
-                    fclose(fconfig);
-                    return EXIT_FAILURE;
-                }*/
-                ///!\jsp comment faire pour ça car il prend nom_switch comme char et non comme switch/!\
-
+                ajouter_Switch(&reseau,&mac_switch,nb_ports,priorite);
             }
-
         }
         else if(nligne <= nb_equipements + nb_liaisons){
             //Pas encore fait
@@ -222,20 +240,5 @@ int charger_Reseau(Reseau_Local *reseau) {
     }
     fclose(fconfig);
     //Initialisation du réseau
-    reseau.nb_stations = nb_stations;
-    reseau.station = malloc(nb_stations * sizeof(Station));
-    if (reseau.station == NULL) {
-        fprintf(stderr, "Erreur malloc pour les stations.\n");
-        return EXIT_FAILURE;
-    }
-    reseau.nb_switchs = nb_switchs;
-    reseau.switchs = malloc(nb_switchs * sizeof(Switch));
-    if (reseau.switchs == NULL) {
-        fprintf(stderr, "Erreur malloc pour les switches.\n");
-        free(reseau.station);
-        return EXIT_FAILURE;
-    }
-
-
     return 0;
 }
