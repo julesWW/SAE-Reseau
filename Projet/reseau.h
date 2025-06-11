@@ -84,8 +84,8 @@ typedef struct TrameEthernet
 {
     char preambule[7];
     char sfd;
-    MACAddress dest[6];
-    MACAddress src[6];
+    MACAddress dest;
+    MACAddress src;
     char type[7];
     char donnees[1500];
     uint8_t bourrage[46];
@@ -94,7 +94,11 @@ typedef struct TrameEthernet
 
 //Fonctions d'initialisation
 void init_IPAddrV4(IPAddrV4 *ip, unsigned char octets[4]);
-void init_MACAddress(MACAddress *mac, unsigned char octets[6]);
+
+void init_MacAddress(MACAddress *mac);
+//void init_MACAddress(MACAddress *mac, unsigned char octets[6]);
+
+
 void init_station(Station *station, MACAddress *mac, IPAddrV4 *ip);
 void init_table_comm(TableComm *table, MACAddress *mac, unsigned int port);
 void init_switch(Switch *sw, MACAddress *mac, size_t nb_ports, size_t priorite, size_t nb_entrees);
