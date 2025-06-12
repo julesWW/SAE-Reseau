@@ -7,96 +7,55 @@
 
 //Fonctions d'initialisation et de deinitialisation
 
-void init_IPAddrV4(IPAddrV4 *ip){
-    for(size_t i = 0; i < 4; i++){
-        ip->octets[i] = 0;
-    }
-}
 
-void deinit_IPAddrV4(IPAddrV4 *ip){
-    for(size_t i = 0; i < 4; i++){
-        ip->octets[i] = 0;
-    }
-}
-                                                //Pour ces 4 là je sais pas trop quoi mettre
-void init_MacAddress(MACAddress *mac){
-    for(size_t i = 0; i < 6; i++){
-        mac->octets[i] = 0;
-    }
-}
 
-void deinit_MacAddress(MACAddress *mac){
-    for(size_t i = 0; i < 6; i++){
-        mac->octets[i] = 0;
-    }
-}
-
-void init_station(Station *station){
-    init_MacAddress(&station->mac);
-    init_IPAddrV4(&station->ip) ;
-}
-void deinit_station(Station *station){
-	deinit_MacAddress(&station->mac);
-	deinit_IPAddrV4(&station->ip);
-}
-
-void init_table_comm(TableComm *table){
-    init_MacAddress(&table->mac);
+void init_table_comm(TableComm *table) {
     table->port = 0;
 }
 
-void deinit_table_comm(TableComm *table){
-	deinit_MacAddress(&table->mac);
+void deinit_table_comm(TableComm *table) {
 	table->port = 0;
 }
 
-void init_switch(Switch *sw){
-    init_MacAddress(&sw->mac);
+void init_switch(Switch *sw) {
+    init_MACAddress(sw->mac);
     sw->nb_ports = 0;
     sw->priorite = 0;
-    // Allocation d'un tableau de TableComm de capacité initiale de 8
-    sw->table_commutation = malloc(INITIAL_CAPACITY * sizeof(TableComm)); 
+    sw->table_commutation = malloc(INITIAL_CAPACITY * sizeof(TableComm)); // Allocation d'un tableau de TableComm de capacité initiale de 8
     if (sw->table_commutation == NULL) {
         fprintf(stderr, "Erreur malloc pour table de commutation.\n");
         exit(EXIT_FAILURE);
     }
 }
 
-void deinit_switch(Switch *sw){
-	deinit_MacAddress(&sw->mac);
+void deinit_switch(Switch *sw) {
+	deinit_MACAddress(sw->mac);
 	sw->nb_ports = 0;
     sw->priorite = 0;
     free(sw->table_commutation);
     sw->table_commutation=NULL;
 }
 
-void init_reseau_local(Reseau_Local *reseau){
+void init_reseau_local(Reseau_Local *reseau) {
     reseau->nb_equipements = 0;
     reseau->equipement_capacite=8;
-    //Allocation d'un tableau d'equipement de capacité initiale de 8
-    reseau->equipement = malloc(INITIAL_CAPACITY * sizeof(Equipement));
+    reseau->equipement = malloc(INITIAL_CAPACITY * sizeof(Equipement));// allocation d'un tableau d'equipement de capacité initiale de 8
     if (reseau->equipement == NULL) {
         fprintf(stderr, "Erreur malloc pour equipement.\n");
         exit(EXIT_FAILURE);
     }
     reseau->nb_liaisons = 0;
     reseau->liaison_capacite=8;
-    //Allocation d'un tableau d'equipement de capacité initiale de 8
-    reseau->liaisons = malloc(INITIAL_CAPACITY * sizeof(Liaison));
+    reseau->liaisons = malloc(INITIAL_CAPACITY * sizeof(Liaison));// allocation d'un tableau de liaisons de capacité initiale de 8
     if (reseau->liaisons == NULL) {
         fprintf(stderr, "Erreur malloc pour liaisons.\n");
         exit(EXIT_FAILURE);
     }
 }
 
-void deinit_reseau_local(Reseau_Local *reseau){
-    //J'espère que la boucle est bonne
-    for (size_t i = 0; i < reseau->nb_equipements; i++) {
-        if (reseau->equipement[i].type == SWITCH) {
-            free(reseau->equipement[i].valeur.sw.table_commutation);
-        }
-    }
+void deinit_reseau_local(Reseau_Local *reseau) {
     reseau->nb_equipements = 0;
+    // Il faut probablement ajouter une boucle qui deinit chaque equipement ci-dessous et les TableComm dans les switchs
     free(reseau->equipement);
     reseau->equipement=NULL;
     reseau->nb_liaisons = 0;
@@ -105,6 +64,7 @@ void deinit_reseau_local(Reseau_Local *reseau){
     reseau->liaison_capacite=0;
     reseau->equipement_capacite=0;
 }
+
 
 
 //Fonctions d'affichage
@@ -123,68 +83,48 @@ void afficher_station(Station *station){
     afficher_ip(&station->ip);
 }
 
-void afficher_switch(Switch *sw) {
+/*void afficher_switch(Switch *sw) {
     printf("Switch - ");
     afficher_mac(&sw->mac);
     printf("Ports : %ld | Priorité : %ld\n", sw->nb_ports, sw->priorite);
-    printf("Table de commutation :\n");
-    for (size_t i = 0; i < sw->nb_ports; i++) {
-        afficher_mac(&sw->table_commutation[i].mac);
+    printf("Table de commutation (%ld entrées) :\n", sw->nb_entrees);
+    for (size_t i = 0; i < sw->nb_entrees; i++) {
+        afficher_mac(&sw->table_commutation[i].mac);                 //Tout ça ne marche plus vu qu'on a enlevé nb_entrees
         printf(" -> Port %u\n", sw->table_commutation[i].port);
     }
-}
+}*/
 
 //Ajout de station / switch
 void ajouter_Station(Reseau_Local *reseau, MACAddress *mac, IPAddrV4 *ip){
-	if(reseau->nb_equipements>=reseau->equipement_capacite){
-		reseau->equipement_capacite*=2;
-		Equipement* Tab_Temp = malloc(sizeof(Equipement)*reseau->equipement_capacite);
-        if (Tab_Temp == NULL) {
-            fprintf(stderr, "Erreur malloc pour Equipement.\n");
-            return false;
-        }
-		for(size_t i=0;i<reseau->nb_equipements;i++){
-			Tab_Temp[i]=reseau->equipement[i];
-		}
-		free(reseau->equipement);
-		reseau->equipement=Tab_Temp;
-	}
-    Station st;
-	init_station(&st);
-	st.mac=*mac;
-	st.ip=*ip;
-	reseau->equipement[reseau->nb_equipements].valeur.st=st;
-	reseau->equipement[reseau->nb_equipements].type=STATION;
-    reseau->equipement[reseau->nb_equipements].numero_equipement = reseau->nb_equipements;
+	Station st;
+	init_station(st);
+	st->mac=mac;
+	st->ip=ip;
+	//allouer de la place en plus si besoin
+	reseau->equipement[reseau->nb_equipements]->valeur->st=st;
+	reseau->equipement[reseau->nb_equipements]->type=STATION;
 	reseau->nb_equipements++;
 }
 
-void ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size_t priorite){
-	if(reseau->nb_equipements>=reseau->equipement_capacite){
-		reseau->equipement_capacite*=2;
-		Equipement* Tab_Temp = malloc(sizeof(Equipement)*reseau->equipement_capacite);
-        if (Tab_Temp == NULL) {
-            fprintf(stderr, "Erreur malloc pour Equipement.\n");
-            return false;
-        }
-		for(size_t i=0;i<reseau->nb_equipements;i++){
-			Tab_Temp[i]=reseau->equipement[i];
-		}
-		free(reseau->equipement);
-		reseau->equipement=Tab_Temp;
-	}
+void ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size_t priorite) {
     Switch sw;
-	init_switch(&sw);
-	sw.mac=*mac;
-	sw.nb_ports=nb_ports;
-	sw.priorite=priorite;
+    sw.mac = *mac;
+    sw.nb_ports = nb_ports;
+    sw.priorite = priorite;
+    sw.table_commutation = malloc(sizeof(TableComm) * nb_ports);
+
+    for (size_t i = 0; i < nb_ports; ++i) {
+        init_MacAddress(&sw.table_commutation[i].mac);
+        sw.table_commutation[i].port = i + 1;
+        sw.table_commutation[i].etat = OUVERT;
+    }
+//allouer de la place en plus si besoin
+    reseau->equipement[reseau->nb_equipements].type = SWITCH;
     reseau->equipement[reseau->nb_equipements].valeur.sw = sw;
-	reseau->equipement[reseau->nb_equipements].type=SWITCH;
-    reseau->equipement[reseau->nb_equipements].numero_equipement = reseau->nb_equipements;
-	reseau->nb_equipements++;
+    reseau->nb_equipements++;
 }
 
-bool ajouter_Liaison(Reseau_Local *reseau, size_t e1, size_t e2, size_t poids){
+bool ajouter_Liaison(Reseau_Local *reseau, size_t *e1, size_t *e2, size_t poids){
     
     //Je pars du principe que les deux équipements existent déjà dans le réseau
     //Vérification que les deux équipements sont différents
@@ -201,7 +141,7 @@ bool ajouter_Liaison(Reseau_Local *reseau, size_t e1, size_t e2, size_t poids){
     liaison.e2 = e2;
     liaison.poids = poids;
     //Vérification que place suffisante dans le tableau de liaisons et si non, taille doublée
-    if(reseau->nb_liaisons>=reseau->liaison_capacite){
+    if(reseau->liaisons>=reseau->liaison_capacite){
 		reseau->liaison_capacite*=2;
 		Liaison* Tab_Temp = malloc(sizeof(Liaison)*reseau->liaison_capacite);
         if (Tab_Temp == NULL) {
