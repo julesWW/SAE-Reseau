@@ -8,24 +8,12 @@
 //Fonctions d'initialisation et de deinitialisation
 
 
-void init_station(Station *station) {
-    init_MACAddress(&station->mac); //A Remplacer par juste les valeur dans le fichier config -> ???
-    init_IPAddrV4(&station->ip) ; //A Remplacer par juste les valeur dans le fichier config
-}
-
-//A Remplacer par juste les valeur dans le fichier config -> ???
-void deinit_station(Station *station) {
-	deinit_MacAddress(&station->mac);
-	deinit_IPAddrV4(&station->ip);
-}
 
 void init_table_comm(TableComm *table) {
-    init_MACAddress(table->mac);
     table->port = 0;
 }
 
 void deinit_table_comm(TableComm *table) {
-	deinit_MACAddress(table->mac);
 	table->port = 0;
 }
 
@@ -109,25 +97,31 @@ void afficher_station(Station *station){
 //Ajout de station / switch
 void ajouter_Station(Reseau_Local *reseau, MACAddress *mac, IPAddrV4 *ip){
 	Station st;
-	init_station(&st);
-	st.mac=*mac;
-	st.ip=*ip;
-	reseau->equipement[reseau->nb_equipements].valeur.st=st;
-	reseau->equipement[reseau->nb_equipements].type=STATION;
-    reseau->equipement[reseau->nb_equipements].numero_equipement = reseau->nb_equipements;
+	init_station(st);
+	st->mac=mac;
+	st->ip=ip;
+	//allouer de la place en plus si besoin
+	reseau->equipement[reseau->nb_equipements]->valeur->st=st;
+	reseau->equipement[reseau->nb_equipements]->type=STATION;
 	reseau->nb_equipements++;
 }
 
-void ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size_t priorite){
-	Switch sw;
-	init_switch(&sw);
-	sw.mac=*mac;
-	sw.nb_ports=nb_ports;
-	sw.priorite=priorite;
+void ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size_t priorite) {
+    Switch sw;
+    sw.mac = *mac;
+    sw.nb_ports = nb_ports;
+    sw.priorite = priorite;
+    sw.table_commutation = malloc(sizeof(TableComm) * nb_ports);
+
+    for (size_t i = 0; i < nb_ports; ++i) {
+        init_MacAddress(&sw.table_commutation[i].mac);
+        sw.table_commutation[i].port = i + 1;
+        sw.table_commutation[i].etat = OUVERT;
+    }
+//allouer de la place en plus si besoin
+    reseau->equipement[reseau->nb_equipements].type = SWITCH;
     reseau->equipement[reseau->nb_equipements].valeur.sw = sw;
-	reseau->equipement[reseau->nb_equipements].type=SWITCH;
-    reseau->equipement[reseau->nb_equipements].numero_equipement = reseau->nb_equipements;
-	reseau->nb_equipements++;
+    reseau->nb_equipements++;
 }
 
 bool ajouter_Liaison(Reseau_Local *reseau, size_t *e1, size_t *e2, size_t poids){
