@@ -63,8 +63,14 @@ void envoyer_trame(Reseau_Local *reseau, MACAddress *src, MACAddress *dest, char
 		printf("Source inconnue dans le réseau\n");
 		return;
 	}
-	transmettre_trame(reseau, &trame, source_index,source_index);
+	size_t nb_arrivee=transmettre_trame(reseau, &trame, source_index,source_index);
 	deinit_trame(&trame);
+	if(nb_arrivee<1){
+		printf("Trame non délivrée : destinataire introuvable\n");
+	}
+	else{
+		printf("Trame délivrée %zu fois à destination\n",nb_arrivee);
+	}
 }
 
 
@@ -123,12 +129,6 @@ size_t transmettre_trame(Reseau_Local *reseau, TrameEthernet *trame, size_t actu
 			Switch *sw = &voisin->valeur.sw;
 			nb_arrivee+=switch_receptionne_trame(reseau, trame, actuel_index, sw, ea[i]);
 			}
-	}
-	if(nb_arrivee<1){
-		printf("Trame non délivrée : destinataire introuvable\n");
-	}
-	else{
-		printf("Trame délivrée %zu fois à destination\n",nb_arrivee);
 	}
 	return nb_arrivee;
 }

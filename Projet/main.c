@@ -18,9 +18,9 @@ int main() {
     TrameEthernet trame;
     init_trame(&trame);
 
-    creer_trame(&trame, &(reseau.equipement[0].valeur.st.mac), &(reseau.equipement[1].valeur.st.mac), donnees);
+    creer_trame(&trame, &(reseau.equipement[8].valeur.st.mac), &(reseau.equipement[14].valeur.st.mac), donnees);
     afficher_trame_utilisateur(&trame);
-    envoyer_trame(&reseau, &(reseau.equipement[0].valeur.st.mac), &(reseau.equipement[1].valeur.st.mac), donnees);
+    envoyer_trame(&reseau, &(reseau.equipement[8].valeur.st.mac), &(reseau.equipement[14].valeur.st.mac), donnees);
     deinit_trame(&trame);
     printf("Envoi de la trame terminé.\n");
 

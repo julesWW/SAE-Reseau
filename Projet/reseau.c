@@ -270,8 +270,8 @@ int charger_Reseau(Reseau_Local *reseau) {
                 MACAddress mac_station;
                 init_MacAddress(&mac_station);
                 unsigned char mac_octets[6];
-                sscanf(ligne + 2, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", 
-                &mac_octets[0], &mac_octets[1], &mac_octets[2], 
+                sscanf(ligne + 2, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
+                &mac_octets[0], &mac_octets[1], &mac_octets[2],
                 &mac_octets[3], &mac_octets[4], &mac_octets[5]);
                 if(mac_octets[0] == 0 && mac_octets[1] == 0 && mac_octets[2] == 0 && mac_octets[3] == 0 && mac_octets[4] == 0 && mac_octets[5] == 0){
                     fprintf(stderr, "Erreur adresse MAC invalide ou erreur lecture adresse MAC.\n");
@@ -300,8 +300,8 @@ int charger_Reseau(Reseau_Local *reseau) {
                 MACAddress mac_switch;
                 init_MacAddress(&mac_switch);
                 unsigned char mac_octets[6];
-                sscanf(ligne + 2, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", 
-                &mac_octets[0], &mac_octets[1], &mac_octets[2], 
+                sscanf(ligne + 2, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx",
+                &mac_octets[0], &mac_octets[1], &mac_octets[2],
                 &mac_octets[3], &mac_octets[4], &mac_octets[5]);
                 if(mac_octets[0] == 0 && mac_octets[1] == 0 && mac_octets[2] == 0 && mac_octets[3] == 0 && mac_octets[4] == 0 && mac_octets[5] == 0){
                     fprintf(stderr, "Erreur adresse MAC invalide ou erreur lecture adresse MAC.\n");
@@ -333,11 +333,10 @@ int charger_Reseau(Reseau_Local *reseau) {
         else if(nligne <= nb_equipements + nb_liaisons+1){
             size_t e1 = UNKNOWN_INDEX;
             size_t e2 = UNKNOWN_INDEX;
-            size_t poids = 0;
+            size_t poids = UNKNOWN_INDEX;
             //Lecture de la liaison
-            printf("%s\n",ligne);
             sscanf(ligne, "%zu;%zu;%zu", &e1, &e2, &poids);
-            if(e1 == UNKNOWN_INDEX || e2 == UNKNOWN_INDEX || poids == 0){
+            if(e1 == UNKNOWN_INDEX || e2 == UNKNOWN_INDEX || poids == UNKNOWN_INDEX){
                 fprintf(stderr, "Erreur lecture liaison ou valeur(s) invalide(s).\n");
                 fclose(fconfig);
                 return EXIT_FAILURE;
