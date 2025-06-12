@@ -89,6 +89,8 @@ typedef struct Reseau_Local{
     Liaison* liaisons;
 } Reseau_Local;
 
+int charger_Reseau(Reseau_Local *reseau);
+
 
 //Fonctions d'initialisation
 void init_IPAddrV4(IPAddrV4 *ip);
@@ -108,6 +110,8 @@ void init_station(Station *station);
 void init_table_comm(TableComm *table);
 void init_switch(Switch *sw);
 void init_reseau_local(Reseau_Local *reseau);
+
+void deinit_reseau_local(Reseau_Local *reseau);
 
 
 //Fonctions d'affichage
