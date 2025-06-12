@@ -56,8 +56,8 @@ typedef struct Switch{
 
 //Valeurs pour différencier station et switch
 typedef enum {
-    STATION,
-    SWITCH
+    STATION = 1, //Station
+    SWITCH = 2   //Switch
 } Type_equipement;
 
 //union pouvant contenir un switch ou une station
@@ -70,6 +70,7 @@ typedef union {
 typedef struct{
 	Type_equipement type;
 	Appareil valeur;
+    size_t numero_equipement;
 }Equipement;
 
 //liaison : contient 2 equipement et représente qu'ils sont liés
@@ -106,6 +107,7 @@ void init_station(Station *station);
 void init_table_comm(TableComm *table);
 void init_switch(Switch *sw);
 void init_reseau_local(Reseau_Local *reseau, size_t nb_stations, Station *stations, size_t nb_switches, Switch *switches);
+*/
 
 
 //Fonctions d'affichage
