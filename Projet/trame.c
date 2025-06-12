@@ -69,7 +69,7 @@ void envoyer_trame(Reseau_Local *reseau, MACAddress *src, MACAddress *dest, char
     }
 
     if (source_index == (size_t)-1) {
-        printf("⚠️ Source inconnue dans le réseau\n");
+        printf("Source inconnue dans le réseau\n");
         return;
     }
 
@@ -104,7 +104,7 @@ void afficher_trame_utilisateur(TrameEthernet *trame) {
     }
     printf("\n");
 
-    printf("=========================\n");
+    printf("------------------------\n");
 }
 
 void transmettre_trame(Reseau_Local *reseau, TrameEthernet *trame, size_t source_index) {
@@ -127,7 +127,7 @@ void transmettre_trame(Reseau_Local *reseau, TrameEthernet *trame, size_t source
         //Vérifier si c'est une station
         if (voisin->type == STATION) {
             if (memcmp(voisin->valeur.st.mac.octets, trame->dest.octets, 6) == 0) {
-                printf("✅ Trame livrée à la station [%zu]\n", voisin_index);
+                printf("Trame livrée à la station [%zu]\n", voisin_index);
                 return;
             }
         }
@@ -140,7 +140,7 @@ void transmettre_trame(Reseau_Local *reseau, TrameEthernet *trame, size_t source
             for (size_t j = 0; j < sw->nb_ports; ++j) {
                 if (memcmp(sw->table_commutation[j].mac.octets, trame->dest.octets, 6) == 0) {
                     size_t port_dest = sw->table_commutation[j].port;
-                    printf("🔁 Trame transmise par switch [%zu] via port [%u]\n", voisin_index, port_dest);
+                    printf("Trame transmise par switch [%zu] via port [%u]\n", voisin_index, port_dest);
                     //Appel récursif possible ici vers l’équipement lié à ce port (à implémenter proprement plus tard)
                     mac_connue = true;
                     break;
@@ -148,11 +148,11 @@ void transmettre_trame(Reseau_Local *reseau, TrameEthernet *trame, size_t source
             }
 
             if (!mac_connue) {
-                printf("🔁 Trame diffusée par switch [%zu] (MAC inconnue)\n", voisin_index);
+                printf("Trame diffusée par switch [%zu] (MAC inconnue)\n", voisin_index);
                 //On pourrait envoyer vers tous les ports sauf le port d’entrée
             }
         }
     }
 
-    printf("❌ Trame non délivrée : destinataire introuvable\n");
+    printf("Trame non délivrée : destinataire introuvable\n");
 }
