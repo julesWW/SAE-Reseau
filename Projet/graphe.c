@@ -9,7 +9,7 @@ size_t nb_liaisons(Reseau_Local *reseau)
     return reseau->nb_liaisons;
 }
 
-size_t index_Equipement(Reseau_Local *reseau, Equipement e)
+size_t index_Equipement(Reseau_Local *reseau, Equipement *e)
 {
 	for(size_t i=0;i<ordre(reseau);i++){
 		if(memcmp(&reseau->equipement[i],&e,sizeof(Equipement))==0){
@@ -60,7 +60,7 @@ size_t equipement_adjacents(Reseau_Local *reseau, Equipement e, size_t ea[])
 {
 	int nb_ea=0;
 	for(size_t i=0;i<reseau->nb_liaisons;i++){
-		if(reseau.liaisons[i].e1 == index_Equipement(reseau,e)){
+		if(reseau->liaisons[i].e1 == index_Equipement(reseau,e)){
 			ea[nb_ea]=reseau->liaisons[i].e2;
 			nb_ea++;
 		}
