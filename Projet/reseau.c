@@ -270,7 +270,9 @@ int charger_Reseau(Reseau_Local *reseau) {
                 MACAddress mac_station;
                 init_MacAddress(&mac_station);
                 unsigned char mac_octets[6];
-                sscanf(ligne + 2, "%hhu:%hhu:%hhu:%hhu:%hhu:%hhu", &mac_octets[0], &mac_octets[1], &mac_octets[2], &mac_octets[3], &mac_octets[4], &mac_octets[5]);
+                sscanf(ligne + 2, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", 
+                &mac_octets[0], &mac_octets[1], &mac_octets[2], 
+                &mac_octets[3], &mac_octets[4], &mac_octets[5]);
                 if(mac_octets[0] == 0 && mac_octets[1] == 0 && mac_octets[2] == 0 && mac_octets[3] == 0 && mac_octets[4] == 0 && mac_octets[5] == 0){
                     fprintf(stderr, "Erreur adresse MAC invalide ou erreur lecture adresse MAC.\n");
                     fclose(fconfig);
@@ -298,7 +300,9 @@ int charger_Reseau(Reseau_Local *reseau) {
                 MACAddress mac_switch;
                 init_MacAddress(&mac_switch);
                 unsigned char mac_octets[6];
-                sscanf(ligne + 2, "%hhu:%hhu:%hhu:%hhu:%hhu:%hhu", &mac_octets[0], &mac_octets[1], &mac_octets[2], &mac_octets[3], &mac_octets[4], &mac_octets[5]);
+                sscanf(ligne + 2, "%hhx:%hhx:%hhx:%hhx:%hhx:%hhx", 
+                &mac_octets[0], &mac_octets[1], &mac_octets[2], 
+                &mac_octets[3], &mac_octets[4], &mac_octets[5]);
                 if(mac_octets[0] == 0 && mac_octets[1] == 0 && mac_octets[2] == 0 && mac_octets[3] == 0 && mac_octets[4] == 0 && mac_octets[5] == 0){
                     fprintf(stderr, "Erreur adresse MAC invalide ou erreur lecture adresse MAC.\n");
                     fclose(fconfig);
