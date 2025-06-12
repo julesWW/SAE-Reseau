@@ -1,11 +1,18 @@
-executable: reseau.o algos.o graphe.o main.c
-	gcc -o executable reseau.o algos.o graphe.o main.c
+executable: reseau.o graphe.o main.o trame.o
+	gcc -o executable reseau.o graphe.o main.o trame.o
 
-reseau.o: reseauParLohan.c reseau.h
+reseau.o: reseau.c reseau.h
 	gcc -c reseau.c -o reseau.o
 
-algos.o: m23/algos.c m23/algos.h graphe.o
-	gcc -c m23/algos.c -o algos.o
 
-graphe.o: m23/graphe.c m23/graphe.h
-	gcc -c m23/graphe.c -o graphe.o
+graphe.o: graphe.c graphe.h
+	gcc -c graphe.c -o graphe.o
+
+trame.o: trame.c trame.h
+	gcc -c trame.c -o trame.o
+
+main.o: main.c reseau.h graphe.h
+	gcc -c main.c -o main.o
+
+clean:
+	rm -f *.o executable

@@ -17,6 +17,7 @@ typedef struct TrameEthernet
 } TrameEthernet;
 
 //initialisation de trame
+void creer_trame(TrameEthernet *trame,MACAddress *src, MACAddress *dest, char* donnees);
 void init_trame(TrameEthernet *trame);
 void deinit_trame(TrameEthernet *trame);
 void envoyer_trame(Reseau_Local *reseau, MACAddress *src, MACAddress *dest, char* donnees);
