@@ -160,6 +160,9 @@ size_t switch_receptionne_trame(Reseau_Local *reseau, TrameEthernet *trame, size
 	size_t nb_ea=equipement_adjacents(reseau,reseau->equipement[actuel_index],ea);//enregistre les equipement adjacents dans ea (et leurs nombre dans nb_ea)
 	for (size_t i = 0; i < nb_ea; ++i) {//pour chaque equipement adjacents
 		if(ea[i]==preced_index){//si l'index de equipement adjacents num i est le même que l'index de l'équipement précédant (alors i = indice du port d'entrée)
+			if(sw->table_commutation[i].etat==FERME){
+				return 0;
+			}
 			if(reseau->equipement[preced_index].type==STATION){   //si c'est une station
 				memcpy(&sw->table_commutation[i].mac,&reseau->equipement[preced_index].valeur.st.mac,sizeof(MACAddress));   //copie de l'adresse mac dans la table de commutation
 			}
