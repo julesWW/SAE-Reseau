@@ -66,8 +66,8 @@ typedef struct{
 
 //liaison : contient 2 equipement et représente qu'ils sont liés
 typedef struct Liaison{
-	Equipement e1;
-	Equipement e2;
+	size_t e1;
+	size_t e2;
 	size_t poids;
 }Liaison;
 
@@ -103,7 +103,7 @@ void init_MacAddress(MACAddress *mac);
 
 void ajouter_Station(Reseau_Local *reseau, MACAddress *mac, IPAddrV4 *ip);
 void ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size_t priorite);
-void ajouter_Liaison(Reseau_Local *reseau, Equipement *e1, Equipement *e2, size_t poids);
+bool ajouter_Liaison(Reseau_Local *reseau, size_t *e1, size_t *e2, size_t poids);
 
 void init_station(Station *station);
 void init_table_comm(TableComm *table);

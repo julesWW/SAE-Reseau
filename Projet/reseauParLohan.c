@@ -130,15 +130,21 @@ void ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size
 	reseau->nb_equipements++;
 }
 
-void ajouter_Liaison(Reseau_Local *reseau, Equipement *e1, Equipement *e2, size_t poids){
-    Liaison liaison;
+bool ajouter_Liaison(Reseau_Local *reseau, size_t *e1, size_t *e2, size_t poids){
+    
     //Je pars du principe que les deux équipements existent déjà dans le réseau
-    if (reseau->nb_equipements < 2) {
-        fprintf(stderr, "Erreur : pas assez d'équipements pour créer une liaison.\n");
-        return;
+    //Vérification que les deux équipements sont différents
+    if(e1 == e2){
+        fprintf(stderr, "Erreur : les deux équipements sont identiques.\n");
+        return false;
     }
-    liaison.e1 = *e1;
-    liaison.e2 = *e2;
+    if(e1 >= reseau->nb_equipements || e2 >= reseau->nb_equipements){
+        fprintf(stderr, "Erreur numéro d'équipement invalide.\n");
+        return false;
+    }
+    Liaison liaison;
+    liaison.e1 = e1;
+    liaison.e2 = e2;
     liaison.poids = poids;
     //Vérification que place suffisante dans le tableau de liaisons et si non, taille doublée
     if(reseau->liaisons>=reseau->liaison_capacite){
@@ -146,7 +152,7 @@ void ajouter_Liaison(Reseau_Local *reseau, Equipement *e1, Equipement *e2, size_
 		Liaison* Tab_Temp = malloc(sizeof(Liaison)*reseau->liaison_capacite);
         if (Tab_Temp == NULL) {
             fprintf(stderr, "Erreur malloc pour Liaison.\n");
-            exit(EXIT_FAILURE);
+            return false;
         }
 		for(size_t i=0;i<reseau->nb_liaisons;i++){
 			Tab_Temp[i]=reseau->liaisons[i];
@@ -156,6 +162,7 @@ void ajouter_Liaison(Reseau_Local *reseau, Equipement *e1, Equipement *e2, size_
 	}
     reseau->liaisons[reseau->nb_liaisons] = liaison;
     reseau->nb_liaisons++;
+    return true;
 }
 
 //Chargement du réseau à partir du fichier de configuration
@@ -264,26 +271,22 @@ int charger_Reseau(Reseau_Local *reseau) {
             }
         }
         else if(nligne <= nb_equipements + nb_liaisons){
-            Equipement e1;
-            Equipement e2;
-            size_t poids;
+            size_t e1 = -1;
+            size_t e2 = -1;
+            size_t poids = 0;
             //Lecture de la liaison
-            sscanf(ligne, "%zu %zu %zu", &e1.numero_equipement, &e2.numero_equipement, &poids);
-            if(e1.numero_equipement >= reseau->nb_equipements || e2.numero_equipement >= reseau->nb_equipements){
-                fprintf(stderr, "Erreur numéro d'équipement invalide ou erreur lecture numéro d'équipement.\n");
-                fclose(fconfig);
-                return EXIT_FAILURE;
-            }
-            //Vérification que les deux équipements sont différents
-            if(e1.numero_equipement == e2.numero_equipement){
-                fprintf(stderr, "Erreur : les deux équipements sont identiques.\n");
+            sscanf(ligne, "%zu %zu %zu", &e1, &e2, &poids); 
+            if(e1 == -1 || e2 == -1 || poids == 0){
+                fprintf(stderr, "Erreur lecture liaison ou valeur(s) invalide(s).\n");
                 fclose(fconfig);
                 return EXIT_FAILURE;
             }
             //Récupération des équipements
-            e1 = reseau->equipement[e1.numero_equipement];
-            e2 = reseau->equipement[e2.numero_equipement];
-            ajouter_Liaison(reseau, &e1, &e2, poids);
+            if(!ajouter_Liaison(reseau, e1, e2, poids)){
+                fprintf(stderr, "Erreur ajout de la liaison.\n");
+                fclose(fconfig);
+                return EXIT_FAILURE;
+            }
 
         }
 
