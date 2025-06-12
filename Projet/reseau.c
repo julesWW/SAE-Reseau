@@ -249,7 +249,7 @@ int charger_Reseau(Reseau_Local *reseau) {
             }
             printf("Nombre d'équipements : %zu, Nombre de liaisons : %zu\n", nb_equipements, nb_liaisons);
         }
-        else if(nligne <= nb_equipements){
+        else if(nligne <= nb_equipements+1){
 			//Vérification que place suffisante dans le tableau d'equipements et si non, taille doublée
 			if(reseau->nb_equipements>=reseau->equipement_capacite){
 				reseau->equipement_capacite*=2;
@@ -326,11 +326,12 @@ int charger_Reseau(Reseau_Local *reseau) {
                 ajouter_Switch(reseau, &mac_switch, nb_ports, priorite);
             }
         }
-        else if(nligne <= nb_equipements + nb_liaisons){
+        else if(nligne <= nb_equipements + nb_liaisons+1){
             size_t e1 = UNKNOWN_INDEX;
             size_t e2 = UNKNOWN_INDEX;
             size_t poids = 0;
             //Lecture de la liaison
+            printf("%s\n",ligne);
             sscanf(ligne, "%zu;%zu;%zu", &e1, &e2, &poids);
             if(e1 == UNKNOWN_INDEX || e2 == UNKNOWN_INDEX || poids == 0){
                 fprintf(stderr, "Erreur lecture liaison ou valeur(s) invalide(s).\n");
@@ -343,9 +344,7 @@ int charger_Reseau(Reseau_Local *reseau) {
                 fclose(fconfig);
                 return EXIT_FAILURE;
             }
-
         }
-
     }
     printf("Lecture du fichier de configuration terminée...\nFermeture du fichier.\n");
     fclose(fconfig);
