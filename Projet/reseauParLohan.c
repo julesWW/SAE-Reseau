@@ -135,7 +135,7 @@ void afficher_switch(Switch *sw) {
 }
 
 //Ajout de station / switch
-void ajouter_Station(Reseau_Local *reseau, MACAddress *mac, IPAddrV4 *ip){
+bool ajouter_Station(Reseau_Local *reseau, MACAddress *mac, IPAddrV4 *ip){
 	if(reseau->nb_equipements>=reseau->equipement_capacite){
 		reseau->equipement_capacite*=2;
 		Equipement* Tab_Temp = malloc(sizeof(Equipement)*reseau->equipement_capacite);
@@ -157,9 +157,10 @@ void ajouter_Station(Reseau_Local *reseau, MACAddress *mac, IPAddrV4 *ip){
 	reseau->equipement[reseau->nb_equipements].type=STATION;
     reseau->equipement[reseau->nb_equipements].numero_equipement = reseau->nb_equipements;
 	reseau->nb_equipements++;
+	return true;
 }
 
-void ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size_t priorite){
+bool ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size_t priorite){
 	if(reseau->nb_equipements>=reseau->equipement_capacite){
 		reseau->equipement_capacite*=2;
 		Equipement* Tab_Temp = malloc(sizeof(Equipement)*reseau->equipement_capacite);
@@ -182,6 +183,7 @@ void ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size
 	reseau->equipement[reseau->nb_equipements].type=SWITCH;
     reseau->equipement[reseau->nb_equipements].numero_equipement = reseau->nb_equipements;
 	reseau->nb_equipements++;
+	return true;
 }
 
 bool ajouter_Liaison(Reseau_Local *reseau, size_t e1, size_t e2, size_t poids){
@@ -288,7 +290,7 @@ int charger_Reseau(Reseau_Local *reseau) {
                 }
                 //ip_station->octets=ip_octets;    //Pareil memcpy
                 memcpy(ip_station.octets, ip_octets, sizeof(ip_octets));
-                ajouter_Station(&reseau, &mac_station, &ip_station);
+                ajouter_Station(reseau, &mac_station, &ip_station);
             }
             if(ligne[0] == '2'){
                 //C'est un switch
@@ -321,16 +323,16 @@ int charger_Reseau(Reseau_Local *reseau) {
                     return EXIT_FAILURE;
                 }
                 //Initialisation du switch
-                ajouter_Switch(&reseau, &mac_switch, nb_ports, priorite);
+                ajouter_Switch(reseau, &mac_switch, nb_ports, priorite);
             }
         }
         else if(nligne <= nb_equipements + nb_liaisons){
-            size_t e1 = -1;
-            size_t e2 = -1;
+            size_t e1 = UNKNOWN_INDEX;
+            size_t e2 = UNKNOWN_INDEX;
             size_t poids = 0;
             //Lecture de la liaison
             sscanf(ligne, "%zu %zu %zu", &e1, &e2, &poids);
-            if(e1 == -1 || e2 == -1 || poids == 0){
+            if(e1 == UNKNOWN_INDEX || e2 == UNKNOWN_INDEX || poids == 0){
                 fprintf(stderr, "Erreur lecture liaison ou valeur(s) invalide(s).\n");
                 fclose(fconfig);
                 return EXIT_FAILURE;
