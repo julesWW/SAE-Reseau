@@ -18,3 +18,6 @@ typedef struct TrameEthernet
 void init_trame(TrameEthernet *trame);
 void deinit_trame(TrameEthernet *trame);
 void envoyer_trame(Reseau_Local *reseau, MACAddress *src, MACAddress *dest, char* donnees);
+void afficher_trame_utilisateur(TrameEthernet *trame);
+void transmettre_trame(Reseau_Local *reseau, TrameEthernet *trame, size_t source_index);
+
