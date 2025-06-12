@@ -1,6 +1,7 @@
 #pragma once
 
 #include "reseau.h"
+#include <string.h>
 
 
 size_t equipement_adjacents(Reseau_Local *reseau, Equipement e, size_t ea[]);

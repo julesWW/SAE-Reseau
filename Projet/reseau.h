@@ -100,8 +100,8 @@ void deinit_MacAddress(MACAddress *mac);
 //void init_MACAddress(MACAddress *mac, unsigned char octets[6]);
 
 
-void ajouter_Station(Reseau_Local *reseau, MACAddress *mac, IPAddrV4 *ip);
-void ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size_t priorite);
+bool ajouter_Station(Reseau_Local *reseau, MACAddress *mac, IPAddrV4 *ip);
+bool ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size_t priorite);
 bool ajouter_Liaison(Reseau_Local *reseau, size_t e1, size_t e2, size_t poids);
 
 void init_station(Station *station);
