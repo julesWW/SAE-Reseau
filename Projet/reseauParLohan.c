@@ -99,25 +99,34 @@ void afficher_switch(Switch *sw) {
 }
 
 //Ajout de station / switch
-void ajouter_Station(Reseau_Local *reseau,MACAddress *mac,IPAddrV4 *ip){
-	Station st;
-	init_station(st);
-	st->mac=mac;
-	st->ip=ip;
-	reseau->equipement[reseau->nb_equipements]->valeur->st=st;
-	reseau->equipement[reseau->nb_equipements]->type=STATION;
-	reseau->nb_equipements++;
+void ajouter_Station(Reseau_Local *reseau, MACAddress *mac, IPAddrV4 *ip) {
+    if (reseau->nb_equipements >= reseau->equipement_capacite) return;
+
+    Station st;
+    init_station(&st, mac, ip);
+
+    reseau->equipement[reseau->nb_equipements].type = STATION;
+    reseau->equipement[reseau->nb_equipements].valeur.st = st;
+    reseau->nb_equipements++;
 }
 
-void ajouter_Switch(Reseau_Local *reseau,MACAddress *mac,size_t nb_ports,size_t priorite){
-	Switch sw;
-	init_switch(sw);
-	sw->mac=mac;
-	sw->nb_ports=nb_ports;
-	sw->priorite=priorite;
-	reseau->equipement[reseau->nb_equipements]->valeur->sw=sw;
-	reseau->equipement[reseau->nb_equipements]->type=SWITCH;
-	reseau->nb_equipements++;
+void ajouter_Switch(Reseau_Local *reseau, MACAddress *mac, size_t nb_ports, size_t priorite) {
+    if (reseau->nb_equipements >= reseau->equipement_capacite) return;
+
+    Switch sw;
+    sw.mac = *mac;
+    sw.nb_ports = nb_ports;
+    sw.priorite = priorite;
+    sw.table_commutation = malloc(sizeof(TableComm) * nb_ports);
+
+    for (size_t i = 0; i < nb_ports; ++i) {
+        init_MacAddress(&sw.table_commutation[i].mac);
+        sw.table_commutation[i].port = i + 1;
+    }
+
+    reseau->equipement[reseau->nb_equipements].type = SWITCH;
+    reseau->equipement[reseau->nb_equipements].valeur.sw = sw;
+    reseau->nb_equipements++;
 }
 
 //Chargement du réseau à partir du fichier de configuration
@@ -131,6 +140,7 @@ int charger_Reseau(Reseau_Local *reseau) {
     if (fconfig == NULL) {
         perror("Erreur d'ouverture du fichier de configuration.\n");
         return EXIT_FAILURE;
+        
     }
 
     char ligne[256];
