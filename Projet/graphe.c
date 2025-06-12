@@ -12,25 +12,23 @@ size_t nb_liaisons(Reseau_Local *reseau)
 size_t index_Equipement(Reseau_Local *reseau, Equipement e)
 {
 	for(size_t i=0;i<ordre(reseau);i++){
-		if(reseau->equipement==e){
-			memcmp(reseau->equipement[i],e,sizeof(Equipement)==0){
-				return i;
-			}
+		if(memcmp(&reseau->equipement[i],&e,sizeof(Equipement))==0){
+			return i;
 		}
 	}
-    return -1;
+    return UNKNOWN_INDEX;
 }
 
 bool existe_liaison(Reseau_Local *reseau, Liaison l)
 {
 	for(size_t i=0;i<reseau->nb_liaisons;i++){
-		if(reseau->nb_liaisons[i].s1 == l.e1){
-			if(reseau->nb_liaisons[i].s2 == l.e2){
+		if(reseau->nb_liaisons[i].e1 == l.e1){
+			if(reseau->nb_liaisons[i].e2 == l.e2){
 				return true;
 			}
 		}
-		else if(reseau->nb_liaisons[i].s1 == l.e2){
-			if(reseau->nb_liaisons[i].s2 == l.e1){
+		else if(reseau->nb_liaisons[i].e1 == l.e2){
+			if(reseau->nb_liaisons[i].e2 == l.e1){
 				return true;
 			}
 		}
@@ -38,35 +36,38 @@ bool existe_liaison(Reseau_Local *reseau, Liaison l)
 	return false;
 }
 
-size_t index_arete(graphe const *g, arete a)
+size_t index_liaison(Reseau_Local *reseau, Liaison l)
 {
-	if(!existe_arete(g,a)){
+	if(!existe_liaison(reseau,l)){
 		return UNKNOWN_INDEX;
 	}
-	for(size_t i=0;i<g->nb_aretes;i++){
-		if(g->aretes[i].s1 == a.s1){
-			if(g->aretes[i].s2 == a.s2){
+	for(size_t i=0;i<reseau->nb_liaisons;i++){
+		if(reseau->nb_liaisons[i].e1 == l.e1){
+			if(reseau->nb_liaisons[i].e2 == l.e2){
 				return i;
 			}
 		}
-		else if(g->aretes[i].s2 == a.s2){
-			if(g->aretes[i].s1 == a.s1){
-				return i;
-			}
-		}
-		else if(g->aretes[i].s1 == a.s2){
-			if(g->aretes[i].s2 == a.s1){
-				return i;
-			}
-		}
-		else if(g->aretes[i].s2 == a.s1){
-			if(g->aretes[i].s1 == a.s2){
+		else if(reseau->nb_liaisons[i].e1 == l.e2){
+			if(reseau->nb_liaisons[i].e2 == l.e1){
 				return i;
 			}
 		}
 	}
-    // retourne l'index de l'arête au sein du tableau d'arêtes de g si l'arête a existe dans g,
-    // la valeur UNKNOWN_INDEX sinon
-
     return UNKNOWN_INDEX;
+}
+
+size_t equipement_adjacents(Reseau_Local *reseau, Equipement e, size_t ea[])
+{
+	int nb_ea=0;
+	for(size_t i=0;i<reseau->nb_liaisons;i++){
+		if(reseau.liaisons[i].e1 == index_Equipement(reseau,e)){
+			ea[nb_ea]=reseau->liaisons[i].e2;
+			nb_ea++;
+		}
+		else if(reseau->liaisons[i].e2 == index_Equipement(reseau,e)){
+			ea[nb_ea]=reseau->liaisons[i].e1;
+			nb_ea++;
+		}
+	}
+	return nb_ea;
 }
