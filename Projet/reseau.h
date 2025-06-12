@@ -110,6 +110,7 @@ void init_table_comm(TableComm *table);
 void init_switch(Switch *sw);
 void init_TrameEthernet(TrameEthernet *trame, char preambule[7], char sfd, MACAddress *dest, MACAddress *src, char type[7], char *donnees);
 void init_reseau_local(Reseau_Local *reseau, size_t nb_stations, Station *stations, size_t nb_switches, Switch *switches);
+*/
 
 //Fonctions d'affichage
 void afficher_mac(MACAddress *mac);
