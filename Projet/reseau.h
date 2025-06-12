@@ -65,8 +65,8 @@ typedef struct{
 
 //liaison : contient 2 equipement et représente qu'ils sont liés
 typedef struct Liaison{
-	Equipement e1;
-	Equipement e2;
+	size_t e1;
+	size_t e2;
 	size_t poids;
 }Liaison;
 
@@ -80,17 +80,6 @@ typedef struct Reseau_Local{
     Liaison* liaisons;
 } Reseau_Local;
 
-typedef struct TrameEthernet
-{
-    char preambule[7];
-    char sfd;
-    MACAddress dest;
-    MACAddress src;
-    char type[7];
-    char donnees[1500];
-    uint8_t bourrage[46];
-    char fcs[4];
-} TrameEthernet;
 
 //Fonctions d'initialisation
 void init_IPAddrV4(IPAddrV4 *ip, unsigned char octets[4]);
