@@ -120,3 +120,8 @@ void afficher_ip(IPAddrV4 *ip);
 void afficher_station(Station *station);
 void afficher_switch(Switch *sw);
 void afficher_reseau(Reseau_Local *reseau);
+
+size_t ordre(Reseau_Local *reseau);
+size_t nb_liaisons(Reseau_Local *reseau);
+
+void afficher_liaisons(Reseau_Local *reseau);

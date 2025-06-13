@@ -13,16 +13,30 @@ int main() {
 	charger_Reseau(&reseau);
     printf("Architecture réseau chargée avec succès !\n");
 
-    char donnees[] = "Bonjour, voici une trame Ethernet !";
+	afficher_reseau(&reseau);
 
-    TrameEthernet trame;
-    init_trame(&trame);
+	for (int i=0;i<2;i++){
 
-    creer_trame(&trame, &(reseau.equipement[8].valeur.st.mac), &(reseau.equipement[14].valeur.st.mac), donnees);
-    afficher_trame_utilisateur(&trame);
-    envoyer_trame(&reseau, &(reseau.equipement[8].valeur.st.mac), &(reseau.equipement[14].valeur.st.mac), donnees);
-    deinit_trame(&trame);
-    printf("Envoi de la trame terminé.\n");
+		char donnees[] = "Bonjour, voici une trame Ethernet !";
+
+		TrameEthernet trame;
+		init_trame(&trame);
+
+		size_t source ;
+		size_t dest ;
+
+			printf("quelle est l'indice de source ?\n");
+			scanf("%zu",&source);
+			printf("quelle est l'indice de destination ?\n");
+			scanf("%zu",&dest);
+
+
+		creer_trame(&trame, &(reseau.equipement[source].valeur.st.mac), &(reseau.equipement[dest].valeur.st.mac), donnees);
+		afficher_trame_utilisateur(&trame);
+		envoyer_trame(&reseau, &(reseau.equipement[source].valeur.st.mac), &(reseau.equipement[dest].valeur.st.mac), donnees);
+		deinit_trame(&trame);
+		printf("Envoi de la trame terminé.\n");
+    }
 
     deinit_reseau_local(&reseau);
     printf("Réseau local déinitialisé.\n");

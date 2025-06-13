@@ -109,7 +109,7 @@ void deinit_reseau_local(Reseau_Local *reseau){
 
 //Fonctions d'affichage
 void afficher_mac(MACAddress *mac){
-    printf("MAC : %02X:%02X:%02X:%02X:%02X:%02X\n",
+    printf("MAC : %02X:%02X:%02X:%02X:%02X:%02X",
            mac->octets[0], mac->octets[1], mac->octets[2],
            mac->octets[3], mac->octets[4], mac->octets[5]);
 }
@@ -119,18 +119,19 @@ void afficher_ip(IPAddrV4 *ip){
 }
 
 void afficher_station(Station *station){
+    printf("___Station___ \n");
     afficher_mac(&station->mac);
     afficher_ip(&station->ip);
 }
 
 void afficher_switch(Switch *sw) {
-    printf("Switch - ");
+    printf("___Switch___\n");
     afficher_mac(&sw->mac);
-    printf("Ports : %ld | Priorité : %ld\n", sw->nb_ports, sw->priorite);
+    printf("\nPorts : %ld | Priorité : %ld\n", sw->nb_ports, sw->priorite);
     printf("Table de commutation :\n");
     for (size_t i = 0; i < sw->nb_ports; i++) {
         afficher_mac(&sw->table_commutation[i].mac);
-        printf(" -> Port %u\n", sw->table_commutation[i].port);
+        printf(" -> Port %zu\n", i+1);
     }
 }
 
@@ -353,4 +354,42 @@ int charger_Reseau(Reseau_Local *reseau) {
     fclose(fconfig);
     //Initialisation du réseau
     return 0;
+}
+
+void afficher_reseau(Reseau_Local *reseau){
+	printf("____voici le réseau :____\n\n");
+	size_t nb_elem=ordre(reseau);
+	for(size_t i=0;i<nb_elem;i++){
+		printf("\nIndice %zu",i);
+		if(reseau->equipement[i].type==STATION){   //si c'est une station
+				afficher_station(&reseau->equipement[i].valeur.st);
+			}
+			else if(reseau->equipement[i].type==SWITCH){   //si c'est un switch
+				afficher_switch(&reseau->equipement[i].valeur.sw);
+			}
+		printf("\n");
+	}
+	afficher_liaisons(reseau);
+}
+
+void afficher_liaisons(Reseau_Local *reseau){
+	printf("\n\t_voici les liaisons :_\n\n");
+	size_t nb_elem=nb_liaisons(reseau);
+	for(size_t i=0;i<nb_elem;i++){
+		printf("%zu (",reseau->liaisons[i].e1);
+		if(reseau->equipement[reseau->liaisons[i].e1].type==STATION){   //si c'est une station
+			afficher_mac(&reseau->equipement[reseau->liaisons[i].e1].valeur.st.mac);
+		}
+		else if(reseau->equipement[reseau->liaisons[i].e1].type==SWITCH){   //si c'est un switch
+			afficher_mac(&reseau->equipement[reseau->liaisons[i].e1].valeur.sw.mac);
+		}
+		printf(") -> %zu (",reseau->liaisons[i].e2);
+				if(reseau->equipement[reseau->liaisons[i].e2].type==STATION){   //si c'est une station
+			afficher_mac(&reseau->equipement[reseau->liaisons[i].e2].valeur.st.mac);
+		}
+		else if(reseau->equipement[reseau->liaisons[i].e2].type==SWITCH){   //si c'est un switch
+			afficher_mac(&reseau->equipement[reseau->liaisons[i].e2].valeur.sw.mac);
+		}
+		printf(") \n");
+	}
 }

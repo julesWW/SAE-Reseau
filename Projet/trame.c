@@ -63,6 +63,12 @@ void envoyer_trame(Reseau_Local *reseau, MACAddress *src, MACAddress *dest, char
 		printf("Source inconnue dans le réseau\n");
 		return;
 	}
+	if(reseau->equipement[source_index].type==STATION){   //si c'est une station
+		printf("Envoie de la trame par la station [%zu]\n",source_index);
+	}
+	else if(reseau->equipement[source_index].type==SWITCH){   //si c'est un switch
+		printf("Envoie de la trame par le switch [%zu]\n",source_index);
+	}
 	size_t nb_arrivee=transmettre_trame(reseau, &trame, source_index,source_index);
 	deinit_trame(&trame);
 	if(nb_arrivee<1){
@@ -118,6 +124,8 @@ size_t transmettre_trame(Reseau_Local *reseau, TrameEthernet *trame, size_t actu
 		if(reseau->equipement[actuel_index].type==SWITCH && reseau->equipement[actuel_index].valeur.sw.table_commutation[i].etat==FERME){ //si on est dans un switch et que ce port est fermé
 			continue;   //skip
 		}
+
+		printf("%zu -> %zu\n",actuel_index,ea[i]);
 		Equipement *voisin = &reseau->equipement[ea[i]];
 
 		//Vérifier si c'est une station
@@ -173,7 +181,7 @@ size_t switch_receptionne_trame(Reseau_Local *reseau, TrameEthernet *trame, size
 	}
 
 	//Transmission
-	printf("Trame diffusée par switch [%zu]\n", actuel_index); //affiche info chemin
+	printf("la trame passe par le switch [%zu] :\n", actuel_index); //affiche info chemin
 	for (size_t i = 0; i < sw->nb_ports; ++i) {  //pour chaque ports
 		if (memcmp(&sw->table_commutation[i].mac.octets, trame->dest.octets, 6) == 0) {   //si le port contient l'adresse mac recherché
 			size_t port_dest = sw->table_commutation[i].port; //enregistre num du port dans port_dest
